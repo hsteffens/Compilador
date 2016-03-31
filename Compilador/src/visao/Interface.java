@@ -1,3 +1,4 @@
+
 package visao;
 
 import java.awt.Event;
@@ -5,17 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.file.Paths;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-
-import analisador.lexico.LexicalError;
-import analisador.lexico.Lexico;
-import analisador.lexico.Token;
 import manipulacao.RecuperarSalvarArquivo;
 
 public class Interface extends javax.swing.JFrame {
@@ -419,34 +416,22 @@ public class Interface extends javax.swing.JFrame {
        file = null;
        editor.setText("");
        console.setText("");
-       barraStatus.setText("Não modificado");
+       barraStatus.setText("NÃ£o modificado");
     }//GEN-LAST:event_bNovoActionPerformed
 
     private void bNovoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_bNovoKeyPressed
     }//GEN-LAST:event_bNovoKeyPressed
 
     private void bEquipeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bEquipeActionPerformed
-        console.setText("Diogo Lehner, Hélinton Pereira Steffens.");
+        console.setText("Diogo Lehner, HÃ©linton Pereira Steffens.");
     }//GEN-LAST:event_bEquipeActionPerformed
 
     private void bGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGerarActionPerformed
-        console.setText("Funcionalidade Não implementada.");
+        console.setText("Funcionalidade nÃ£o implementada.");
     }//GEN-LAST:event_bGerarActionPerformed
 
-    private void bCompilarActionPerformed(java.awt.event.ActionEvent evt) {
-    	Lexico lexico = new Lexico();
-    	lexico.setInput(editor.getText());
-    	try{
-    		Token token = null;
-    		StringBuilder mensagem = new StringBuilder();
-    		while ((token = lexico.nextToken()) != null) {
-    			mensagem.append(token.getLexeme() + '\n');
-			}
-    		console.setText(mensagem.toString());
-    	}catch(LexicalError e){
-    		console.setText(e.getMessage() + "e;, em " + e.getPosition());
-    	}
-//       console.setText("Funcionalidade Não implementada");
+    private void bCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCompilarActionPerformed
+       console.setText("Funcionalidade nÃ£o implementada");
     }//GEN-LAST:event_bCompilarActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
@@ -461,7 +446,7 @@ public class Interface extends javax.swing.JFrame {
             try {
                 editor.setText(RecuperarSalvarArquivo.recuperarArquivo(Paths.get(file.getAbsolutePath())));
                 console.setText("");
-                barraStatus.setText(file.getAbsolutePath() + " >>>Não modificado");
+                barraStatus.setText(file.getAbsolutePath() + " >>>NÃ£o modificado");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Erro ao abrir arquivo: " + e.toString());
             }
@@ -497,7 +482,7 @@ public class Interface extends javax.swing.JFrame {
                 }    
                 file = arquivo.getSelectedFile();
                 if(file == null || file.getName().equals("")){
-                    javax.swing.JOptionPane.showMessageDialog( null, "Nome de Arquivo Inválido", "Nome de Arquivo Inválido", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog( null, "Nome de Arquivo InvÃ¡lido", "Nome de Arquivo InvÃ¡lido", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }else{
                     try{
                         RecuperarSalvarArquivo.salvar(editor.getText(), Paths.get(file.getAbsolutePath()));
@@ -511,7 +496,7 @@ public class Interface extends javax.swing.JFrame {
             
             //satus
             console.setText("");
-            barraStatus.setText(file.getAbsolutePath() + " >>>Não modificado");
+            barraStatus.setText(file.getAbsolutePath() + " >>>NÃ£o modificado");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao salvar arquivo: " + e.toString());
         }
