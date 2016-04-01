@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 import analisador.lexico.LexicalError;
 import analisador.lexico.Lexico;
 import analisador.lexico.Token;
+import analisador.lexico.tipoConstants.EnConstantes;
 import manipulacao.RecuperarSalvarArquivo;
 
 public class Interface extends javax.swing.JFrame {
@@ -440,7 +441,7 @@ public class Interface extends javax.swing.JFrame {
     		Token token = null;
     		StringBuilder mensagem = new StringBuilder();
     		while ((token = lexico.nextToken()) != null) {
-    			mensagem.append(token.getLexeme() + '\n');
+    			mensagem.append(EnConstantes.get(token.getId()).getDescricao() + '\n');
 			}
     		console.setText(mensagem.toString());
     	}catch(LexicalError e){
