@@ -15,11 +15,11 @@ import analisador.lexico.tipoConstants.EnConstantes;
 public class Compilar implements ActionListener{
 
 	private Interface tela;
-	
+
 	public Compilar(Interface tela) {
 		this.tela = tela;
 	}
-	
+
 	public Interface getTela() {
 		return tela;
 	}
@@ -31,65 +31,96 @@ public class Compilar implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent action) {
 		String text = getTela().getEditor().getText();
-		
+
 		if (text.isEmpty()) {
 			getTela().getConsole().setText("nenhum programa para compilar!");
 			return;
 		}
-		
+
 		Lexico lexico = new Lexico();
 		lexico.setInput(text);
-    	
-		TreeMap<Integer, String> conteudoEdicao = getArvoreConteudoPorLinha(text);
-    	
-    	List<String> linhas = new ArrayList<>();
-    	List<String> classes = new ArrayList<>();
-    	List<String> lexemas = new ArrayList<>();
 
-    	//Monta o cabecalho de saida
-    	linhas.add( "linha");
-    	classes.add("classe");
-    	lexemas.add("lexema");
-    	
-    	int linha = 0;
-    	Token token = null;
-    	try{
-    		while ((token = lexico.nextToken()) != null) {
-    			if (EnConstantes.COMENTARIO == EnConstantes.get(token.getId())) {
+		TreeMap<Integer, String> conteudoEdicao = getArvoreConteudoPorLinha(text);
+
+		List<String> linhas = new ArrayList<>();
+		List<String> classes = new ArrayList<>();
+		List<String> lexemas = new ArrayList<>();
+
+		//Monta o cabecalho de saida
+		linhas.add( "linha");
+		classes.add("classe");
+		lexemas.add("lexema");
+
+		int linha = 0;
+		Token token = null;
+		try{
+			while ((token = lexico.nextToken()) != null) {
+				EnConstantes classeToken = EnConstantes.get(token.getId());
+				if (EnConstantes.COMENTARIO == classeToken) {
 					continue;
 				}
-    			linhas.add(getLinhaToken(conteudoEdicao, token, linha));
-    			classes.add(EnConstantes.get(token.getId()).getDescricao());
-    			lexemas.add(token.getLexeme());
+				
+				if (EnConstantes.PALAVRA_RESERVADA == classeToken) {
+					throw new LexicalError(token.getLexeme() + " palavra reservada inválida", token.getPosition());
+				}
+				linhas.add(getLinhaToken(conteudoEdicao, token, linha));
+				classes.add(classeToken.getDescricao());
+				lexemas.add(token.getLexeme());
 			}
-    		
-    		linhas = formatTabela(linhas);
-    		classes = formatTabela(classes);
-    		lexemas = formatTabela(lexemas);
-    		
-    		List<String> listaSimbolos = new ArrayList<String>();
-    		for (int i = 0; i < linhas.size(); i++) {
-    			listaSimbolos.add(linhas.get(i));
-    			listaSimbolos.add(classes.get(i));
-    			listaSimbolos.add(lexemas.get(i));
-    		}
-    		
-    		
-    		String saidaFormatada = String.format(getFormat(listaSimbolos), listaSimbolos.toArray());
-    		saidaFormatada = saidaFormatada + '\n'+ "programa compilado com sucesso.";
+
+			linhas = formatTabela(linhas);
+			classes = formatTabela(classes);
+			lexemas = formatTabela(lexemas);
+
+			List<String> listaSimbolos = new ArrayList<String>();
+			for (int i = 0; i < linhas.size(); i++) {
+				listaSimbolos.add(linhas.get(i));
+				listaSimbolos.add(classes.get(i));
+				listaSimbolos.add(lexemas.get(i));
+			}
+
+
+			String saidaFormatada = String.format(getFormat(listaSimbolos), listaSimbolos.toArray());
+			saidaFormatada = saidaFormatada + '\n'+ "programa compilado com sucesso.";
 			getTela().getConsole().setText(saidaFormatada);
-    	}catch(LexicalError tokenError){
-    		int linhaAtual = 1;
-    		for (Integer posicao : conteudoEdicao.keySet()) {
-    			if (tokenError.getPosition() < posicao) {
-    				linha = linhaAtual;
-    				break;
-    			}
-    			linhaAtual ++;
-    		}
-    		getTela().getConsole().setText("Erro na linha "+ linha+" - " + tokenError.getMessage());
-    	}
-		
+		}catch(LexicalError tokenError){
+			int linhaAtual = 1;
+			for (Integer posicao : conteudoEdicao.keySet()) {
+				if (tokenError.getPosition() < posicao) {
+					linha = linhaAtual;
+					break;
+				}
+				linhaAtual ++;
+			}
+			String errorMsg = "Erro na linha "+ linha+" - " + tokenError.getMessage();
+
+			if ("Símbolo inválido".equals(tokenError.getMessage())) {
+				errorMsg = errorMsg +": "+ getTokenError(text, tokenError);
+			}
+			getTela().getConsole().setText(errorMsg);
+		}
+
+	}
+
+	private String getTokenError(String text, LexicalError tokenError) {
+		int quebraLinha = text.indexOf('\n', tokenError.getPosition());
+		int tabulacao = text.indexOf('\t', tokenError.getPosition());
+		int espaco = text.indexOf(' ', tokenError.getPosition());
+		if (quebraLinha == -1) {
+			quebraLinha =999999999;
+		}
+		if (tabulacao == -1) {
+			tabulacao =999999999;
+		}
+		if (espaco == -1) {
+			espaco =999999999;
+		}
+		int endIndex = quebraLinha < tabulacao && quebraLinha < espaco ? quebraLinha :
+			tabulacao < quebraLinha && tabulacao < espaco ? tabulacao : 
+				espaco < quebraLinha && espaco < tabulacao ? espaco : espaco;
+
+		String simbolo = text.substring(tokenError.getPosition(), endIndex == 999999999 ? text.length() : endIndex);
+		return simbolo;
 	}
 
 	private String getFormat(List<String> arrayList) {
@@ -104,7 +135,7 @@ public class Compilar implements ActionListener{
 				format = format + "%20s\n";
 				count = 0;
 			}
-			
+
 			count ++;
 		}
 		return format;
@@ -137,9 +168,9 @@ public class Compilar implements ActionListener{
 	 */
 	private TreeMap<Integer, String> getArvoreConteudoPorLinha(String text) {
 		TreeMap<Integer, String> hashMap = new TreeMap<Integer, String>();
-    	int count = 0;
-    	text = text+'\n';
-    	for (int i = 0; i < text.length(); i++) {
+		int count = 0;
+		text = text+'\n';
+		for (int i = 0; i < text.length(); i++) {
 			char charAt = text.charAt(i);
 			if ('\n' == charAt) {
 				int position = i;
@@ -149,34 +180,34 @@ public class Compilar implements ActionListener{
 		}
 		return hashMap;
 	}
-	
-	  private List<String> formatTabela(List<String>tabela){
-	    	int maiorLeght = 0;
-	    	for (String string : tabela) {
-				if (maiorLeght == 0) {
-					maiorLeght = string.length();
-					continue;
-				}
-				
-				if (maiorLeght < string.length()) {
-					maiorLeght = string.length();
-					continue;
+
+	private List<String> formatTabela(List<String>tabela){
+		int maiorLeght = 0;
+		for (String string : tabela) {
+			if (maiorLeght == 0) {
+				maiorLeght = string.length();
+				continue;
+			}
+
+			if (maiorLeght < string.length()) {
+				maiorLeght = string.length();
+				continue;
+			}
+		}
+
+		List<String> tabelaFormatada = new ArrayList<>();
+		for (String string : tabela) {
+			int tamanho = string.length();
+			if (maiorLeght > tamanho) {
+				for (int i = 0; i < (maiorLeght - tamanho); i++) {
+					string = string.concat(" ");
 				}
 			}
-	    	
-	    	List<String> tabelaFormatada = new ArrayList<>();
-	    	for (String string : tabela) {
-				int tamanho = string.length();
-				if (maiorLeght > tamanho) {
-					for (int i = 0; i < (maiorLeght - tamanho); i++) {
-						string = string.concat(" ");
-					}
-				}
-				tabelaFormatada.add(string);
-			}
-	    	
-	    	return tabelaFormatada;
-	    	
-	    }
+			tabelaFormatada.add(string);
+		}
+
+		return tabelaFormatada;
+
+	}
 
 }
