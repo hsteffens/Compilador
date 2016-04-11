@@ -32,11 +32,6 @@ public class Compilar implements ActionListener{
 	public void actionPerformed(ActionEvent action) {
 		String text = getTela().getEditor().getText();
 
-		if (text.isEmpty()) {
-			getTela().getConsole().setText("nenhum programa para compilar!");
-			return;
-		}
-
 		Lexico lexico = new Lexico();
 		lexico.setInput(text);
 
@@ -54,7 +49,12 @@ public class Compilar implements ActionListener{
 		int linha = 0;
 		Token token = null;
 		try{
-			while ((token = lexico.nextToken()) != null) {
+			token = lexico.nextToken();
+			if (token == null) {
+				getTela().getConsole().setText("nenhum programa para compilar!");
+				return;
+			}
+			do {
 				EnConstantes classeToken = EnConstantes.get(token.getId());
 				if (EnConstantes.COMENTARIO == classeToken) {
 					continue;
@@ -66,6 +66,11 @@ public class Compilar implements ActionListener{
 				linhas.add(getLinhaToken(conteudoEdicao, token, linha));
 				classes.add(classeToken.getDescricao());
 				lexemas.add(token.getLexeme());
+			} while ((token = lexico.nextToken()) != null);
+			
+			if (linhas.size() == 1) {
+				getTela().getConsole().setText("nenhum programa para compilar!");
+				return;
 			}
 
 			linhas = formatTabela(linhas);

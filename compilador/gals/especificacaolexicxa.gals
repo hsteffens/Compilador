@@ -1,0 +1,57 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = Java
+ScannerName = Lexico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+#RegularDefinitions
+min:[a-z]
+mai:[A-Z]
+dig:[0-9]
+letra:{min} | {mai}
+#Tokens
+pr: {min}+ ({mai}? {min}+)*
+int:i_({letra})({letra}|{dig})*
+float:f_({letra})({letra}|{dig})*
+string:s_({letra})({letra}|{dig})*
+bool:b_({letra})({letra}|{dig})*
+conint:{dig}+
+confloat:{dig}+,{dig}+
+constring: \" ([^\" \n])* \"
+c_bloco:!/"*" ( ([^/] ([^ "*"] | ("*")+ [^"*" /])* ("*")+ /) | ("*"/))
+:[\s\t\n]
+","
+":"
+";"
+"["
+"]"
+"("
+")"
+"{"
+"}"
+"+"
+"-"
+"*"
+"/"
+"<-"
+"="
+"!="
+"<"
+"<="
+">"
+">="
+and = pr : "and"
+false = pr : "false"
+if = pr : "if"
+in = pr : "in"
+isFalseDo = pr : "isFalseDo"
+isTrueDo = pr : "isTrueDo"
+main = pr : "main"
+module = pr : "module"
+not = pr : "not"
+or = pr : "or"
+out = pr : "out"
+true = pr : "true"
+while = pr : "while" 
