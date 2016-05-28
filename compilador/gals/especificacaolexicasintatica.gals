@@ -1,0 +1,165 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = Stream
+Parser = LL
+#RegularDefinitions
+min:[a-z]
+mai:[A-Z]
+dig:[0-9]
+letra:{min} | {mai}
+#Tokens
+pr: {min}+ ({mai}? {min}+)*
+int:i_({letra})({letra}|{dig})*
+float:f_({letra})({letra}|{dig})*
+string:s_({letra})({letra}|{dig})*
+bool:b_({letra})({letra}|{dig})*
+conint:{dig}+
+confloat:{dig}+,{dig}+
+constring: \" ([^\" \n])* \"
+c_bloco:!/"*" ( ([^/] ([^ "*"] | ("*")+ [^"*" /])* ("*")+ /) | ("*"/))
+:[\s\t\n]
+","
+":"
+";"
+"["
+"]"
+"("
+")"
+"{"
+"}"
+"+"
+"-"
+"*"
+"/"
+"<-"
+"="
+"!="
+"<"
+"<="
+">"
+">="
+and = pr : "and"
+false = pr : "false"
+if = pr : "if"
+in = pr : "in"
+isFalseDo = pr : "isFalseDo"
+isTrueDo = pr : "isTrueDo"
+main = pr : "main"
+module = pr : "module"
+not = pr : "not"
+or = pr : "or"
+out = pr : "out"
+true = pr : "true"
+while = pr : "while" 
+#NonTerminals
+<programa>
+<variaveis>
+<var>
+<l_variaveis>
+<id>
+<identificador>
+<l_comando>
+<comando>
+<comando_ent_dados>
+<comando_atrb>
+<id_expressao>
+<l_identificadores>
+<comando_out_dados>
+<l_expressoes>
+<comando_selecao>
+<comando_selecao_true>
+<comando_false>
+<false>
+<comando_selecao_false>
+<comando_true>
+<true>
+<comando_repeticao>
+<expressao>
+<elemento>
+<relacional>
+<aritimetica>
+<operador_relacional>
+<termo>
+<tempo>
+<fator>
+<identificador_variavel>
+<vetor_uso>
+<l_variaveis1>
+<id1>
+<l_comando1>
+<id_expressao1>
+<l_identificadores1>
+<l_expressoes1>
+<expressao1>
+<aritimetica1>
+<termo1>
+<comando_condicao>
+<comando_repeticao1>
+<relacional1>
+
+
+
+
+#Grammar
+<programa>::= main module <variaveis>"{" <l_comando> "}";
+ 
+<variaveis>::=<var>|î;
+<var>::= ":" <l_variaveis>";";
+<l_variaveis>::=<id><l_variaveis1>;
+<l_variaveis1>::=","<l_variaveis>|î;
+
+<id>::=<identificador><id1>;
+<id1>::=î|"["conint"]";
+<identificador>::=int|float|string|bool;
+ 
+<l_comando>::=<comando><l_comando1>;
+<l_comando1>::=<l_comando>|î;
+<comando>::=<comando_atrb>|<comando_ent_dados>|<comando_out_dados>|<comando_selecao>|<comando_repeticao>;
+ 
+<comando_atrb>::=<id_expressao>  "<-" <expressao>";";
+<id_expressao>::=<identificador><id_expressao1>;
+<id_expressao1>::=î|"[" <expressao> "]";
+ 
+<comando_ent_dados>::= in "(" <l_identificadores> ")" ";";
+<l_identificadores>::=<id_expressao><l_identificadores1>;  
+<l_identificadores1>::=","<l_identificadores>|î;
+ 
+<comando_out_dados>::= out "(" <l_expressoes> ")" ";";
+<l_expressoes>::=<expressao><l_expressoes1>;
+<l_expressoes1>::=","<l_expressoes>|î;
+ 
+<comando_selecao>::= if"(" <expressao> ")" <comando_condicao>;
+<comando_condicao>::= <comando_selecao_true>|<comando_selecao_false>;
+
+<comando_selecao_true>::= isTrueDo":" "{" <l_comando> "}" <comando_false>;
+<comando_false>::=<false>|î;
+<false>::=isFalseDo":" "{" <l_comando> "}";
+
+<comando_selecao_false>::=isFalseDo":" "{" <l_comando> "}" <comando_true>;
+<comando_true>::=<true>|î;
+<true>::=isTrueDo":" "{" <l_comando> "}";
+
+<comando_repeticao>::=while "(" <expressao> ")" <comando_repeticao1>;
+<comando_repeticao1>::=isTrueDo":" "{"<l_comando>"}"|isFalseDo":" "{"<l_comando>"}";
+
+<expressao>::=<elemento><expressao1>;
+<expressao1>::= and <elemento><expressao1>|or <elemento><expressao1>|î;
+<elemento>::=<relacional>|true|false|not  <elemento>;
+<relacional>::=<aritimetica><relacional1>;
+<relacional1>::=<operador_relacional><aritimetica>|î;
+<operador_relacional>::= "=" | "!=" | "<" | "<=" | ">" | ">=";
+<aritimetica>::=<termo><aritimetica1>;
+<aritimetica1>::= "+" <termo><aritimetica1> | "-" <termo><aritimetica1> | î;
+<termo>::=<fator><termo1>;   
+<termo1>::="*" <fator><termo1>|"/" <fator><termo1>|î;
+<fator>::=<identificador_variavel><vetor_uso>| conint | confloat | constring| "(" <expressao> ")"| "+" <fator> | "-" <fator>;
+<identificador_variavel>::= int|float|string|bool;
+<vetor_uso>::=î| "[" <expressao> "]";
+
