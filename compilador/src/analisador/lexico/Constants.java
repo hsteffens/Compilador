@@ -1,5 +1,5 @@
 package analisador.lexico;
-public interface Constants extends ScannerConstants
+public interface Constants extends ScannerConstants, ParserConstants
 {
     int EPSILON  = 0;
     int DOLLAR   = 1;
@@ -46,5 +46,4 @@ public interface Constants extends ScannerConstants
     int t_out = 41;
     int t_true = 42;
     int t_while = 43;
-
 }

@@ -15,9 +15,10 @@ import javax.swing.KeyStroke;
 
 import manipulacao.RecuperarSalvarArquivo;
 import visao.actions.Compilar;
+import visao.actions.GerarCodigo;
 
 public class Interface extends javax.swing.JFrame {
-    File file = null;
+	public static File file = null;
     String textoCopyCutPaste = "";
     
     public Interface() {
@@ -102,13 +103,22 @@ public class Interface extends javax.swing.JFrame {
         
         //Hotkey Gerar
         KeyStroke keyGerar = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0); 
+        final GerarCodigo gerarCodigo = new GerarCodigo(this);
         Action performGerar = new AbstractAction("Gerar") {  
-            public void actionPerformed(ActionEvent e) {     
-                 bGerarActionPerformed(e);
+            public void actionPerformed(ActionEvent e) { 
+            	gerarCodigo.actionPerformed(e);
             }
         }; 
         bSave.getActionMap().put("performGerar", performGerar);
         bSave.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyGerar, "performGerar");
+        
+//        Action performGerar = new AbstractAction("Gerar") {  
+//            public void actionPerformed(ActionEvent e) {     
+//                 bGerarActionPerformed(e);
+//            }
+//        }; 
+//        bSave.getActionMap().put("performGerar", performGerar);
+//        bSave.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyGerar, "performGerar");
         
         //Hotkey Equipe
         KeyStroke keyEquipe = KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0); 
@@ -312,11 +322,7 @@ public class Interface extends javax.swing.JFrame {
         bGerar.setPreferredSize(new java.awt.Dimension(100, 42));
         bGerar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         bGerar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        bGerar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bGerarActionPerformed(evt);
-            }
-        });
+        bGerar.addActionListener(new GerarCodigo(this));
 
         console.setEditable(false);
         console.setColumns(20);
@@ -424,9 +430,9 @@ public class Interface extends javax.swing.JFrame {
         console.setText("Diogo Lehner, Hélinton Pereira Steffens.");
     }//GEN-LAST:event_bEquipeActionPerformed
 
-    private void bGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGerarActionPerformed
-        console.setText("Funcionalidade Não implementada.");
-    }//GEN-LAST:event_bGerarActionPerformed
+//    private void bGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGerarActionPerformed
+//        console.setText("Funcionalidade Não implementada.");
+//    }//GEN-LAST:event_bGerarActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         
@@ -479,13 +485,13 @@ public class Interface extends javax.swing.JFrame {
                     javax.swing.JOptionPane.showMessageDialog( null, "Nome de Arquivo Inválido", "Nome de Arquivo Inválido", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }else{
                     try{
-                        RecuperarSalvarArquivo.salvar(editor.getText(), Paths.get(file.getAbsolutePath()));
+                        RecuperarSalvarArquivo.salvar(editor.getText(), "", Paths.get(file.getAbsolutePath()));
                     }catch(Exception e){
                         JOptionPane.showMessageDialog(null, "Erro ao salvar arquivo: " + e.toString());
                     }
                 } 
             }else{
-                RecuperarSalvarArquivo.salvar(editor.getText(), Paths.get(file.getAbsolutePath()));
+                RecuperarSalvarArquivo.salvar(editor.getText(), "", Paths.get(file.getAbsolutePath()));
             }
             
             //satus
@@ -588,7 +594,5 @@ public class Interface extends javax.swing.JFrame {
 	public void setEditor(javax.swing.JTextArea editor) {
 		this.editor = editor;
 	}
-    
-    
 
 }

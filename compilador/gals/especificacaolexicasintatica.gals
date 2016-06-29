@@ -108,58 +108,58 @@ while = pr : "while"
 
 
 #Grammar
-<programa>::= main module <variaveis>"{" <l_comando> "}";
+<programa>::= #12 main module <variaveis>"{" <l_comando> "}" #13;
  
 <variaveis>::=<var>|î;
 <var>::= ":" <l_variaveis>";";
 <l_variaveis>::=<id><l_variaveis1>;
-<l_variaveis1>::=","<l_variaveis>|î;
+<l_variaveis1>::=","<l_variaveis>|î#22;
 
-<id>::=<identificador><id1>;
-<id1>::=î|"["conint"]";
+<id>::=<identificador>#21<id1>;
+<id1>::=î|"["conint#26"]";
 <identificador>::=int|float|string|bool;
  
 <l_comando>::=<comando><l_comando1>;
 <l_comando1>::=<l_comando>|î;
 <comando>::=<comando_atrb>|<comando_ent_dados>|<comando_out_dados>|<comando_selecao>|<comando_repeticao>;
  
-<comando_atrb>::=<id_expressao>  "<-" <expressao>";";
-<id_expressao>::=<identificador><id_expressao1>;
-<id_expressao1>::=î|"[" <expressao> "]";
+<comando_atrb>::=<id_expressao>#21"<-" <expressao>#25";";
+<id_expressao>::=<identificador><id_expressao1>#23;
+<id_expressao1>::=î|#27"[" <expressao> "]";
  
 <comando_ent_dados>::= in "(" <l_identificadores> ")" ";";
-<l_identificadores>::=<id_expressao><l_identificadores1>;  
+<l_identificadores>::=<id_expressao>#21<l_identificadores1>;  
 <l_identificadores1>::=","<l_identificadores>|î;
  
 <comando_out_dados>::= out "(" <l_expressoes> ")" ";";
-<l_expressoes>::=<expressao><l_expressoes1>;
+<l_expressoes>::=<expressao> #11 <l_expressoes1>;
 <l_expressoes1>::=","<l_expressoes>|î;
  
 <comando_selecao>::= if"(" <expressao> ")" <comando_condicao>;
 <comando_condicao>::= <comando_selecao_true>|<comando_selecao_false>;
 
-<comando_selecao_true>::= isTrueDo":" "{" <l_comando> "}" <comando_false>;
+<comando_selecao_true>::= isTrueDo #28 ":" "{" <l_comando> "}" <comando_false> #29;
 <comando_false>::=<false>|î;
-<false>::=isFalseDo":" "{" <l_comando> "}";
+<false>::=isFalseDo #30 ":" "{" <l_comando> "}";
 
-<comando_selecao_false>::=isFalseDo":" "{" <l_comando> "}" <comando_true>;
+<comando_selecao_false>::=isFalseDo #28 ":" "{" <l_comando> "}" <comando_true> #29;
 <comando_true>::=<true>|î;
-<true>::=isTrueDo":" "{" <l_comando> "}";
+<true>::=isTrueDo #30 ":" "{" <l_comando> "}";
 
-<comando_repeticao>::=while "(" <expressao> ")" <comando_repeticao1>;
-<comando_repeticao1>::=isTrueDo":" "{"<l_comando>"}"|isFalseDo":" "{"<l_comando>"}";
+<comando_repeticao>::= #31 while "(" <expressao> ")" <comando_repeticao1>;
+<comando_repeticao1>::=isTrueDo #32 ":" "{"<l_comando>"}" #33 |isFalseDo #32 ":" "{"<l_comando>"}" #33;
 
 <expressao>::=<elemento><expressao1>;
-<expressao1>::= and <elemento><expressao1>|or <elemento><expressao1>|î;
-<elemento>::=<relacional>|true|false|not  <elemento>;
+<expressao1>::= and <elemento> #14 <expressao1>|or <elemento> #15 <expressao1>|î;
+<elemento>::=<relacional>|true #16 |false #17 |not  <elemento> #18 ;
 <relacional>::=<aritimetica><relacional1>;
-<relacional1>::=<operador_relacional><aritimetica>|î;
+<relacional1>::=<operador_relacional> #10 <aritimetica> #9 |î;
 <operador_relacional>::= "=" | "!=" | "<" | "<=" | ">" | ">=";
 <aritimetica>::=<termo><aritimetica1>;
-<aritimetica1>::= "+" <termo><aritimetica1> | "-" <termo><aritimetica1> | î;
+<aritimetica1>::= "+" <termo>#1 <aritimetica1> | "-" <termo> #2 <aritimetica1> | î;
 <termo>::=<fator><termo1>;   
-<termo1>::="*" <fator><termo1>|"/" <fator><termo1>|î;
-<fator>::=<identificador_variavel><vetor_uso>| conint | confloat | constring| "(" <expressao> ")"| "+" <fator> | "-" <fator>;
+<termo1>::="*" <fator> #3 <termo1> |"/" <fator> #4 <termo1> |î;
+<fator>::=<identificador_variavel> #21 <vetor_uso> #24 | conint #5 | confloat #6 | constring #19 | "(" <expressao> ")"| "+" <fator> #7 | "-" <fator> #8;
 <identificador_variavel>::= int|float|string|bool;
-<vetor_uso>::=î| "[" <expressao> "]";
+<vetor_uso>::=î| #27 "[" <expressao> "]";
 
