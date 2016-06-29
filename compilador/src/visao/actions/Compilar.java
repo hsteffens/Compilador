@@ -2,9 +2,12 @@ package visao.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+
+import javax.swing.JOptionPane;
 
 import analisador.lexico.LexicalError;
 import analisador.lexico.Lexico;
@@ -13,6 +16,7 @@ import analisador.lexico.Semantico;
 import analisador.lexico.Sintatico;
 import analisador.lexico.SyntaticError;
 import analisador.lexico.Token;
+import manipulacao.RecuperarSalvarArquivo;
 import visao.Interface;
 
 public class Compilar implements ActionListener{
@@ -48,8 +52,34 @@ public class Compilar implements ActionListener{
 		if	(text.toString() != null && !"".equals(text.toString().trim())){
 			try{
 				sintatico.parse(lexico, semantico);
-				String saidaFormatada = String.format("Programa compilado com sucesso.");
-				getTela().getConsole().setText(saidaFormatada);
+				 
+				try {
+						if (Interface.file == null) {
+			                javax.swing.JFileChooser
+			                arquivo = new javax.swing.JFileChooser();
+			                arquivo.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
+			                int resultadoArq = arquivo.showSaveDialog(null);
+			                if( resultadoArq == javax.swing.JFileChooser.CANCEL_OPTION){
+			                    return;
+			                }    
+			                Interface.file = arquivo.getSelectedFile();
+			                if(Interface.file == null || Interface.file.getName().equals("")){
+			                    javax.swing.JOptionPane.showMessageDialog( null, "Nome de Arquivo Inválido", "Nome de Arquivo Inválido", javax.swing.JOptionPane.ERROR_MESSAGE);
+			                }else{
+			                    try{
+			                        RecuperarSalvarArquivo.salvar(text, "", Paths.get(Interface.file.getAbsolutePath()));
+			                    }catch(Exception e){
+			                        JOptionPane.showMessageDialog(null, "Erro ao salvar arquivo: " + e.toString());
+			                    }
+			                } 
+			            }else{
+			                RecuperarSalvarArquivo.salvar(text, "", Paths.get(Interface.file.getAbsolutePath()));
+			            }
+			        } catch (Exception e) {
+			            JOptionPane.showMessageDialog(null, "Erro ao salvar arquivo: " + e.toString());
+			        }
+					String saidaFormatada = String.format("Programa compilado com sucesso.");
+					getTela().getConsole().setText(saidaFormatada);
 			}catch(LexicalError tokenError){
 				int linhaAtual = 1;
 				for (Integer posicao : conteudoEdicao.keySet()) {
@@ -77,12 +107,24 @@ public class Compilar implements ActionListener{
 				String errorMsg = "Erro na linha "+ linha+" - Encontrado " ;
 				errorMsg = errorMsg + getSyntaticError(text, e) + " ";
 				errorMsg = errorMsg + e.getMessage();
-				
+				if	("".equals(getSyntaticError(text, e))) errorMsg = "Fim de programa não encontrado. Para o programa " + text; 
 				getTela().getConsole().setText(errorMsg);
 				
 				e.printStackTrace();
 			}catch (SemanticError e) {
-				// TODO Auto-generated catch block
+				int linhaAtual = 1;
+				for (Integer posicao : conteudoEdicao.keySet()) {
+					if (e.getPosition() < posicao) {
+						linha = linhaAtual;
+						break;
+					}
+					linhaAtual ++;
+				}
+				String errorMsg = "Erro na linha "+ linha+ " - ";
+				errorMsg = errorMsg + e.getMessage();
+				
+				getTela().getConsole().setText(errorMsg);
+				
 				e.printStackTrace();
 			}
 		}else{

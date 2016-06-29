@@ -1,11 +1,8 @@
 package analisador.lexico;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
-import javax.swing.text.Position;
 
 public class Semantico implements Constants{
 	public static final String int64 = "int64";
