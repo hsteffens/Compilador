@@ -109,7 +109,7 @@ public class Sintatico implements Constants{
 
         while (!step());
         
-        System.out.println(GerarCodigo.codigo);
+        //System.out.println(GerarCodigo.codigo);
     }
     
 	public static String getOperadorRelacional() {

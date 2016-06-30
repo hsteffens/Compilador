@@ -13,7 +13,7 @@ public class Semantico implements Constants{
 	public String executeAction(int action, Token token, String operadorRelacional, Stack<String> pilhaTipos, List<String> listaIdentificadores, Stack<String> pilhaEndereco, int tamanho, Map<String, Integer> tabelaSimbolos, int posicao)	throws SemanticError{
 		String lexeme = token != null ? token.getLexeme() : null;
 		String codigo = "";
-		System.out.println("Ação #"+action+", Token: "+token);
+		//System.out.println("Ação #"+action+", Token: "+token);
 
 		String a;
 		String b;
@@ -131,7 +131,7 @@ public class Semantico implements Constants{
 				toCodigo(codigo);
 				break;
 			case 12:
-				codigo = "\n.assembly extern mscorlib{}"
+				codigo = "assembly extern mscorlib{}"
 						+ "\n.assembly codigo_objeto{}"
 						+ "\n.module codigo_objeto.exe"
 						+ "\n.class public _Principal{"
@@ -421,7 +421,7 @@ public class Semantico implements Constants{
 	}
 	
 	private void toCodigo(String codigo){
-		System.out.println("Código gerado :"+codigo+"\n\n");
+		//System.out.println("Código gerado :"+codigo+"\n\n");
 	}
 	
 }
